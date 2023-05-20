@@ -1,0 +1,15 @@
+{
+  "id": "1903c23f-d249-4eb5-ba40-258d5e03e5f0",
+  "version": "0.0.1",
+  "requiredApiVersion": "^1.19.0",
+  "iconFile": "icon.png",
+  "author": {
+    "name": "Shubham Bhardwaj",
+    "homepage": "https://github.com/XshubhamX",
+    "support": "https://github.com/BotpressXRocketChat"
+  },
+  "name": "Botpress-Super-Connector",
+  "nameSlug": "botpress-super-connector",
+  "classFile": "BotpressSuperConnectorApp.ts",
+  "description": "Botpress connector for RocketChat"
+}
