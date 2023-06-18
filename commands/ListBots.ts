@@ -54,7 +54,7 @@ export class ListBots implements ISlashCommand {
 
     const appUser = (await read.getUserReader().getAppUser()) as IUser;
 
-    const message_blocks: Array<Block> = [];
+    const messageBlocks: Array<Block> = [];
 
     const sectionBlock = getSectionBlock({
       appId: this._appId,
@@ -104,7 +104,7 @@ export class ListBots implements ISlashCommand {
       }),
     });
 
-    message_blocks.push(
+    messageBlocks.push(
       sectionBlock,
       botsActionBlock,
       createButtonSectionElement
@@ -116,7 +116,7 @@ export class ListBots implements ISlashCommand {
       .setSender(appUser)
       .setRoom(room);
 
-    msg.setBlocks(message_blocks);
+    msg.setBlocks(messageBlocks);
 
     return read.getNotifier().notifyUser(user, msg.getMessage());
   }

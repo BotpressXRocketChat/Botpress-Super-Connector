@@ -32,12 +32,10 @@ export const executeBlockActionHandler = async (
 
   try {
     if (actionId.startsWith(ActionIdsPrefixes.CREATE_BOT)) {
-      logger.warn("hey");
       createBotUIFlow(context, read, persistence, modify, appID, logger);
     } else if (actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT)) {
       //   updateBotUIFlow(context, read, persistence, modify, appID, logger);
       //   break;
-      logger.warn("hey");
     } else if (actionId.startsWith(ActionIdsPrefixes.DELETE_BOT)) {
       deleteBotFlow();
     }
