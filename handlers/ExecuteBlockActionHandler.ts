@@ -14,9 +14,11 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { ActionIdsPrefixes } from "../types/Types";
-import { createBotUIFlow } from "../flows/CreateBot";
-import { deleteBotFlow } from "../flows/DeleteBot";
+import { createBotUIFlow } from "../flows/CreateBotUI";
+// import { updateBotUIFlow } from "../flows/UpdateBotUI";
+import { deleteBotFlow } from "../flows/DeleteBotUI";
 // import { updateBotFlow } from "../flows/UpdateBot";
+// import { getAllBots } from "../db/ReadBot";
 
 export const executeBlockActionHandler = async (
   context: UIKitBlockInteractionContext,
@@ -34,8 +36,8 @@ export const executeBlockActionHandler = async (
     if (actionId.startsWith(ActionIdsPrefixes.CREATE_BOT)) {
       createBotUIFlow(context, read, persistence, modify, appID, logger);
     } else if (actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT)) {
-      //   updateBotUIFlow(context, read, persistence, modify, appID, logger);
-      //   break;
+      // const data = await getAllBots(appID, read);
+      logger.info(data);
     } else if (actionId.startsWith(ActionIdsPrefixes.DELETE_BOT)) {
       deleteBotFlow();
     }

@@ -24,6 +24,7 @@ export function createUpdateBotModal(
   persistence: IPersistence,
   modify: IModify,
   appId: string
+  // initialValues: object
 ): IUIKitSurfaceViewParam {
   const inputBlocks: Block[] = CREATE_UPDATE_BOT_MODAL_CONFIG["FIELDS"].map(
     (field) => {

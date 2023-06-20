@@ -26,7 +26,14 @@ import {
   PlainText,
   ActionsBlock,
 } from "@rocket.chat/ui-kit";
-import { DANGER, MARK_DOWN, PLAIN_TEXT, PRIMARY } from "../types/Types";
+import {
+  ActionIdsPrefixes,
+  DANGER,
+  MARK_DOWN,
+  PLAIN_TEXT,
+  PRIMARY,
+} from "../types/Types";
+import { getAllBots } from "../db/ReadBot";
 
 export class ListBots implements ISlashCommand {
   public command = "list-bots";
@@ -56,6 +63,8 @@ export class ListBots implements ISlashCommand {
 
     const messageBlocks: Array<Block> = [];
 
+    const data: Array<Object> = await getAllBots(this._appId, read);
+
     const sectionBlock = getSectionBlock({
       appId: this._appId,
       blockId: LIST_BOT_CONFIG["PRIMARY_TEXT"]["BLOCK_ID"],
@@ -65,21 +74,19 @@ export class ListBots implements ISlashCommand {
       }) as TextObject,
     });
 
-    const botsBlocks: Array<ButtonElement> = TEST_BOTS.map(
-      (bot): ButtonElement => {
-        return getButtonBlock({
-          appId: this._appId,
-          blockId: bot["blockId"],
-          actionId: bot["actionId"],
-          text: getTextObject({
-            text: bot["name"],
-            type: PLAIN_TEXT,
-          }) as PlainText,
-          value: bot["name"],
-          style: DANGER,
-        });
-      }
-    );
+    const botsBlocks: Array<ButtonElement> = data.map((bot): ButtonElement => {
+      return getButtonBlock({
+        appId: this._appId,
+        blockId: `block#${bot["username"]}`,
+        actionId: `${ActionIdsPrefixes.UPDATE_BOT}#${bot["username"]}`,
+        text: getTextObject({
+          text: bot["name"],
+          type: PLAIN_TEXT,
+        }) as PlainText,
+        value: bot["name"],
+        style: DANGER,
+      });
+    });
 
     const botsActionBlock: ActionsBlock = getActionBlock({
       elements: botsBlocks,

@@ -14,13 +14,15 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
-import { createBotDBFlow } from "../flows/CreateBot";
+import { createBotDBFlow } from "../flows/CreateBotUI";
+import { getAllBots } from "../db/ReadBot";
 
 export const executeViewSubmitHandler = async (
   context: UIKitViewSubmitInteractionContext,
   read: IRead,
   persistence: IPersistence,
   modify: IModify,
+  appID: string,
   logger: ILogger
 ): Promise<void> => {
   const { view } = context.getInteractionData();
@@ -28,11 +30,9 @@ export const executeViewSubmitHandler = async (
   try {
     switch (view.id) {
       case CREATE_UPDATE_BOT_MODAL_CONFIG.CREATE_VIEW_ID:
-        await createBotDBFlow(context, read, persistence, modify, logger);
+        await createBotDBFlow(context, read, persistence, modify, logger, appID);
         context.getInteractionResponder().successResponse();
       case CREATE_UPDATE_BOT_MODAL_CONFIG.UPDATE_VIEW_ID:
-        // await createBotDBFlow(context, read, persistence, modify);
-        // context.getInteractionResponder().successResponse();
         break;
       default:
         break;

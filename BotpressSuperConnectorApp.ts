@@ -12,7 +12,6 @@ import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
 import { ListBots } from "./commands/ListBots";
 import { executeBlockActionHandler } from "./handlers/ExecuteBlockActionHandler";
 import { executeViewSubmitHandler } from "./handlers/ExecuteViewSubmitHandler";
-
 import {
   IUIKitResponse,
   UIKitBlockInteractionContext,
@@ -27,7 +26,6 @@ export class BotpressSuperConnectorApp extends App {
   public async extendConfiguration(
     configuration: IConfigurationExtend
   ): Promise<void> {
-    this.getLogger().warn(this.getID());
     const listBotsCommand: ListBots = new ListBots(
       this.getLogger(),
       this.getID()
@@ -68,6 +66,7 @@ export class BotpressSuperConnectorApp extends App {
       read,
       persistence,
       modify,
+      this.getID(),
       this.getLogger()
     );
   }
