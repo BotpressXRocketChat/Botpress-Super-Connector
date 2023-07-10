@@ -14,4 +14,12 @@ export enum ActionIdsPrefixes {
   CREATE_BOT = "create-bot",
   DELETE_BOT = "delete-bot",
   SAVE_BOT = "save-bot",
+  BOT_SINGLE_CHOICE = "bot-single-choice",
 }
+export {
+  ConverseResponse,
+  Response,
+  ResponseType,
+  Choice,
+} from "./botpress/ConverseResponse";
+export { Bot, CoreDBIdsPersistenceStorage } from "./botpress/Bot";

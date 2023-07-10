@@ -1,3 +1,0 @@
-const deleteBotFlow = () => {};
-
-export { deleteBotFlow };

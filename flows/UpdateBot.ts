@@ -11,9 +11,12 @@ import {
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { createUpdateBotModal } from "../ui_elements/modals/CreateUpdateBot";
 import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
-import { createBotInsideDB } from "../db/CreateBot";
+import { updateBotInsideDB } from "../db/Update";
+import { Bot } from "../types/Types";
+import { getAllBots } from "../db/Read";
+import { extractDataFromViewModal } from "../helpers/Botpress";
 
-const createBotUIFlow = async (
+const updateBotUIFlow = async (
   context: UIKitBlockInteractionContext,
   read: IRead,
   persistence: IPersistence,
@@ -22,12 +25,30 @@ const createBotUIFlow = async (
   logger: ILogger
 ): Promise<void> => {
   const triggerId = context.getInteractionData().triggerId;
+  const data = context.getInteractionData();
+  const { actionId } = data;
+
+  const persistenceData: Array<Bot> = await getAllBots(appId, read);
+
+  const botpressId = actionId.split("#")?.[1];
+
+  let existingbOT: Bot | null = null;
+
+  persistenceData.map((bot) => {
+    if (bot.botpressId == botpressId) {
+      existingbOT = bot;
+    }
+  });
+
+  if (!existingbOT) return;
+
   const createBotModal = createUpdateBotModal(
     context,
     read,
     persistence,
     modify,
-    appId
+    appId,
+    existingbOT
   );
 
   await modify
@@ -39,27 +60,16 @@ const createBotUIFlow = async (
     );
 };
 
-const createBotDBFlow = async (
+const updateBotDBFlow = async (
   context: UIKitViewSubmitInteractionContext,
   read: IRead,
   persistence: IPersistence,
   modify: IModify,
-  logger: ILogger,
-  appID: string
+  logger: ILogger
 ) => {
-  const { view } = context.getInteractionData();
+  const updateBotData: Partial<Bot> = extractDataFromViewModal(context);
 
-  const newBotData: object = {};
-
-  CREATE_UPDATE_BOT_MODAL_CONFIG.FIELDS.map(({ BLOCK_ID, ACTION_ID }) => {
-    const key = ACTION_ID.split("#")[1];
-
-    const value = view.state ? view.state[BLOCK_ID][ACTION_ID] : "";
-
-    newBotData[key] = value;
-  });
-
-  await createBotInsideDB(persistence, modify, logger, newBotData, appID);
+  await updateBotInsideDB(persistence, modify, read, logger, updateBotData);
 };
 
-export { createBotUIFlow, createBotDBFlow };
+export { updateBotDBFlow, updateBotUIFlow };

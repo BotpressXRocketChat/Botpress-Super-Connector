@@ -11,12 +11,15 @@ import {
 import {
   IUIKitResponse,
   UIKitBlockInteractionContext,
-  UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { ActionIdsPrefixes } from "../types/Types";
-import { createBotUIFlow } from "../flows/CreateBotUI";
-// import { updateBotUIFlow } from "../flows/UpdateBotUI";
-import { deleteBotFlow } from "../flows/DeleteBotUI";
+import { createBotUIFlow } from "../flows/CreateBot";
+import { updateBotUIFlow } from "../flows/UpdateBot";
+import { deleteBotInsideDB } from "../db/Delete";
+import { SEPARATOR } from "../config/BlocksConfig";
+import { intitateConversationHandler } from "../flows/BotConverse";
+import { deleteBotDBFlow } from "../flows/DeleteBot";
+
 // import { updateBotFlow } from "../flows/UpdateBot";
 // import { getAllBots } from "../db/ReadBot";
 
@@ -30,16 +33,37 @@ export const executeBlockActionHandler = async (
   logger: ILogger
 ): Promise<IUIKitResponse> => {
   const data = context.getInteractionData();
-  const { actionId, user } = data;
+  const { actionId } = data;
 
   try {
-    if (actionId.startsWith(ActionIdsPrefixes.CREATE_BOT)) {
-      createBotUIFlow(context, read, persistence, modify, appID, logger);
-    } else if (actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT)) {
-      // const data = await getAllBots(appID, read);
-      logger.info(data);
-    } else if (actionId.startsWith(ActionIdsPrefixes.DELETE_BOT)) {
-      deleteBotFlow();
+    switch (true) {
+      case actionId.startsWith(ActionIdsPrefixes.CREATE_BOT):
+        createBotUIFlow(context, read, persistence, modify, appID, logger);
+      case actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT):
+        updateBotUIFlow(context, read, persistence, modify, appID, logger);
+      case actionId.startsWith(ActionIdsPrefixes.DELETE_BOT):
+        deleteBotDBFlow(context, read, persistence, modify, appID, logger);
+      case actionId.startsWith(ActionIdsPrefixes.BOT_SINGLE_CHOICE):
+        const { room, message } = data;
+        if (!message?.id || !room) throw new Error("Invalid message or room");
+        const botUsername = actionId.split("#")[2];
+
+        const selectedChoice = actionId
+          .split("#")[1]
+          .split(SEPARATOR)
+          .join(" ");
+
+        await intitateConversationHandler(
+          read,
+          http,
+          modify,
+          appID,
+          logger,
+          botUsername,
+          message?.threadId || message.id,
+          selectedChoice,
+          room
+        );
     }
   } catch (error) {
     return {

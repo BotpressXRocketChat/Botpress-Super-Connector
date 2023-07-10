@@ -17,8 +17,13 @@ import {
   UIKitBlockInteractionContext,
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
+import {
+  IMessage,
+  IPostMessageSent,
+} from "@rocket.chat/apps-engine/definition/messages";
+import { executePostMessageSentHandler } from "./handlers/ExecutePostMessageSentHandler";
 
-export class BotpressSuperConnectorApp extends App {
+export class BotpressSuperConnectorApp extends App implements IPostMessageSent {
   constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
     super(info, logger, accessors);
   }
@@ -61,9 +66,27 @@ export class BotpressSuperConnectorApp extends App {
     persistence: IPersistence,
     modify: IModify
   ) {
-    return executeViewSubmitHandler(
+    return await executeViewSubmitHandler(
       context,
       read,
+      persistence,
+      modify,
+      this.getID(),
+      this.getLogger()
+    );
+  }
+
+  public async executePostMessageSent(
+    message: IMessage,
+    read: IRead,
+    http: IHttp,
+    persistence: IPersistence,
+    modify: IModify
+  ): Promise<void> {
+    return await executePostMessageSentHandler(
+      message,
+      read,
+      http,
       persistence,
       modify,
       this.getID(),

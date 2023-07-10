@@ -14,8 +14,8 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
-import { createBotDBFlow } from "../flows/CreateBotUI";
-import { getAllBots } from "../db/ReadBot";
+import { createBotDBFlow } from "../flows/CreateBot";
+import { getAllBots } from "../db/Read";
 
 export const executeViewSubmitHandler = async (
   context: UIKitViewSubmitInteractionContext,
@@ -30,7 +30,14 @@ export const executeViewSubmitHandler = async (
   try {
     switch (view.id) {
       case CREATE_UPDATE_BOT_MODAL_CONFIG.CREATE_VIEW_ID:
-        await createBotDBFlow(context, read, persistence, modify, logger, appID);
+        await createBotDBFlow(
+          context,
+          read,
+          persistence,
+          modify,
+          logger,
+          appID
+        );
         context.getInteractionResponder().successResponse();
       case CREATE_UPDATE_BOT_MODAL_CONFIG.UPDATE_VIEW_ID:
         break;

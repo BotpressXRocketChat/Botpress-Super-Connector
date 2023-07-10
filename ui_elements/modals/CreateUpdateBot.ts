@@ -16,18 +16,21 @@ import {
 } from "../Block";
 
 import { Block, PlainText } from "@rocket.chat/ui-kit";
-import { DANGER, PLAIN_TEXT, PRIMARY } from "../../types/Types";
+import { Bot, DANGER, PLAIN_TEXT, PRIMARY } from "../../types/Types";
 
 export function createUpdateBotModal(
   context: UIKitBlockInteractionContext,
   read: IRead,
   persistence: IPersistence,
   modify: IModify,
-  appId: string
-  // initialValues: object
+  appId: string,
+  existingBot?: Bot
 ): IUIKitSurfaceViewParam {
   const inputBlocks: Block[] = CREATE_UPDATE_BOT_MODAL_CONFIG["FIELDS"].map(
     (field) => {
+      const botProperty = field.ACTION_ID.split("#")?.[1];
+      if (!botProperty) throw new Error("Invalid Config");
+
       return getInputBlock({
         label: getTextObject({
           type: PLAIN_TEXT,
@@ -41,7 +44,7 @@ export function createUpdateBotModal(
             type: PLAIN_TEXT,
             text: field.PLACE_HOLDER,
           }) as PlainText,
-          initialValue: "",
+          initialValue: existingBot ? existingBot[botProperty] : "",
         }),
       });
     }
@@ -59,20 +62,24 @@ export function createUpdateBotModal(
     style: DANGER,
   });
 
+  const buttonType = existingBot ? "UPDATE_BUTTON" : "SAVE_BUTTON";
+
   const submitButton = getButtonBlock({
     appId,
-    blockId: CREATE_UPDATE_BOT_MODAL_CONFIG["SAVE_BUTTON"].BLOCK_ID,
-    actionId: CREATE_UPDATE_BOT_MODAL_CONFIG["SAVE_BUTTON"].ACTION_ID,
+    blockId: CREATE_UPDATE_BOT_MODAL_CONFIG[buttonType].BLOCK_ID,
+    actionId: CREATE_UPDATE_BOT_MODAL_CONFIG[buttonType].ACTION_ID,
     text: getTextObject({
-      text: CREATE_UPDATE_BOT_MODAL_CONFIG["SAVE_BUTTON"].TEXT,
+      text: CREATE_UPDATE_BOT_MODAL_CONFIG[buttonType].TEXT,
       type: PLAIN_TEXT,
     }) as PlainText,
-    value: CREATE_UPDATE_BOT_MODAL_CONFIG["SAVE_BUTTON"].TEXT,
+    value: CREATE_UPDATE_BOT_MODAL_CONFIG[buttonType].TEXT,
     style: PRIMARY,
   });
 
+  const viewId = existingBot ? "UPDATE_VIEW_ID" : "CREATE_VIEW_ID";
+
   return {
-    id: CREATE_UPDATE_BOT_MODAL_CONFIG["CREATE_VIEW_ID"],
+    id: CREATE_UPDATE_BOT_MODAL_CONFIG[viewId],
     type: UIKitSurfaceType.MODAL,
     title: getTextObject({
       text: CREATE_UPDATE_BOT_MODAL_CONFIG["LABEL"],

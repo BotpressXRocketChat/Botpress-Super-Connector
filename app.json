@@ -12,5 +12,7 @@
     "nameSlug": "botpress-super-connector",
     "classFile": "BotpressSuperConnectorApp.ts",
     "description": "Botpress connector for RocketChat",
-    "implements": []
+    "implements": [
+        "IPostMessageSent"
+    ]
 }

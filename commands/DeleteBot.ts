@@ -36,8 +36,8 @@ import {
 } from "../types/Types";
 import { getAllBots } from "../db/Read";
 
-export class ListBots implements ISlashCommand {
-  public command = "list-bots";
+export class DeleteBot implements ISlashCommand {
+  public command = "delete-bot";
   public i18nDescription = "";
   public providesPreview = false;
   public i18nParamsExample = "";
@@ -75,7 +75,7 @@ export class ListBots implements ISlashCommand {
       }) as TextObject,
     });
 
-    const botsBlocks: Array<ButtonElement> = data.map((bot): ButtonElement => {
+    const yesNoBlocks: Array<ButtonElement> = data.map((bot): ButtonElement => {
       return getButtonBlock({
         appId: this._appId,
         blockId: `${BLOCK}#${bot.botpressId}`,
@@ -89,34 +89,11 @@ export class ListBots implements ISlashCommand {
       });
     });
 
-    const botsActionBlock: ActionsBlock = getActionBlock({
-      elements: botsBlocks,
+    const yesNoActionBlock: ActionsBlock = getActionBlock({
+      elements: yesNoBlocks,
     });
 
-    const createButtonSectionElement = getSectionBlock({
-      appId: this._appId,
-      text: getTextObject({
-        text: LIST_BOT_CONFIG["CREATE_BUTTON"]["LABEL"],
-        type: MARK_DOWN,
-      }),
-      accessory: getButtonBlock({
-        appId: this._appId,
-        blockId: LIST_BOT_CONFIG["CREATE_BUTTON"]["BLOCK_ID"],
-        actionId: LIST_BOT_CONFIG["CREATE_BUTTON"]["ACTION_ID"],
-        text: getTextObject({
-          text: LIST_BOT_CONFIG["CREATE_BUTTON"]["TEXT"],
-          type: PLAIN_TEXT,
-        }) as PlainText,
-        value: LIST_BOT_CONFIG["CREATE_BUTTON"]["TEXT"],
-        style: PRIMARY,
-      }),
-    });
-
-    messageBlocks.push(
-      sectionBlock,
-      botsActionBlock,
-      createButtonSectionElement
-    );
+    messageBlocks.push(sectionBlock, yesNoActionBlock);
 
     const msg = modify
       .getCreator()
