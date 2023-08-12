@@ -1,4 +1,5 @@
 import {
+  ILogger,
   IPersistence,
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
@@ -7,6 +8,10 @@ import {
   RocketChatAssociationRecord,
 } from "@rocket.chat/apps-engine/definition/metadata";
 import { Bot, CoreDBIdsPersistenceStorage } from "../types/Types";
+import {
+  validateCoreDBIdsStorage,
+  validateBots,
+} from "../validator/DBResponse";
 
 export const getBotByBotpressId = async (
   appId: string,
@@ -27,32 +32,26 @@ export const getBotByBotpressId = async (
 
 export const getAllBots = async (
   appId: string,
-  read: IRead
+  read: IRead,
+  logger?: ILogger
 ): Promise<Array<Bot>> => {
-  const coreDBIDsdata = (await read
-    .getPersistenceReader()
-    .readByAssociation(
-      new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, appId)
-    )) as CoreDBIdsPersistenceStorage[];
-
-  if (!coreDBIDsdata) return [];
-
-  const coreDBIDs = coreDBIDsdata[0].coreDBIDs;
-
-  const data: Bot[] = [];
-
-  for (let idx = 0; idx < coreDBIDs.length; idx++) {
-    let botData = (await read
+  const coreDBIDsdata = validateCoreDBIdsStorage(
+    (await read
       .getPersistenceReader()
       .readByAssociation(
-        new RocketChatAssociationRecord(
-          RocketChatAssociationModel.MISC,
-          coreDBIDs[idx]
-        )
-      )) as Bot[];
+        new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, appId)
+      )) as CoreDBIdsPersistenceStorage[]
+  );
 
-    botData ? data.push(botData[0]) : null;
-  }
+  const botsDBData: Array<Bot[]> = await Promise.all(
+    coreDBIDsdata.coreDBIDs.map((id) => {
+      return read
+        .getPersistenceReader()
+        .readByAssociation(
+          new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, id)
+        ) as Promise<Bot[]>;
+    })
+  );
 
-  return data;
+  return validateBots(botsDBData);
 };

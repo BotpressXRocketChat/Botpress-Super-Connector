@@ -66,6 +66,8 @@ export class ListBots implements ISlashCommand {
 
     const data: Array<Bot> = await getAllBots(this._appId, read);
 
+    this._logger.debug(data);
+
     const sectionBlock = getSectionBlock({
       appId: this._appId,
       blockId: LIST_BOT_CONFIG["PRIMARY_TEXT"]["BLOCK_ID"],

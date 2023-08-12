@@ -1,4 +1,5 @@
 import {
+  ILogger,
   IModify,
   IPersistence,
   IRead,
@@ -7,7 +8,10 @@ import {
 import { UIKitSurfaceType } from "@rocket.chat/apps-engine/definition/uikit";
 
 import { UIKitBlockInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
-import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../../config/BlocksConfig";
+import {
+  CREATE_UPDATE_BOT_MODAL_CONFIG,
+  SEPARATOR,
+} from "../../config/BlocksConfig";
 import {
   getButtonBlock,
   getInputBlock,
@@ -24,12 +28,16 @@ export function createUpdateBotModal(
   persistence: IPersistence,
   modify: IModify,
   appId: string,
-  existingBot?: Bot
+  existingBot?: Bot,
+  logger?: ILogger
 ): IUIKitSurfaceViewParam {
+  logger?.info(existingBot);
   const inputBlocks: Block[] = CREATE_UPDATE_BOT_MODAL_CONFIG["FIELDS"].map(
     (field) => {
       const botProperty = field.ACTION_ID.split("#")?.[1];
       if (!botProperty) throw new Error("Invalid Config");
+
+      logger?.info(field.BLOCK_ID);
 
       return getInputBlock({
         label: getTextObject({
@@ -76,10 +84,12 @@ export function createUpdateBotModal(
     style: PRIMARY,
   });
 
-  const viewId = existingBot ? "UPDATE_VIEW_ID" : "CREATE_VIEW_ID";
+  const viewId = existingBot
+    ? `${CREATE_UPDATE_BOT_MODAL_CONFIG["UPDATE_VIEW_ID"]}${SEPARATOR}${existingBot.coreDdId}`
+    : CREATE_UPDATE_BOT_MODAL_CONFIG["CREATE_VIEW_ID"];
 
   return {
-    id: CREATE_UPDATE_BOT_MODAL_CONFIG[viewId],
+    id: viewId,
     type: UIKitSurfaceType.MODAL,
     title: getTextObject({
       text: CREATE_UPDATE_BOT_MODAL_CONFIG["LABEL"],

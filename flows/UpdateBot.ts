@@ -10,7 +10,10 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { createUpdateBotModal } from "../ui_elements/modals/CreateUpdateBot";
-import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
+import {
+  CREATE_UPDATE_BOT_MODAL_CONFIG,
+  SEPARATOR,
+} from "../config/BlocksConfig";
 import { updateBotInsideDB } from "../db/Update";
 import { Bot } from "../types/Types";
 import { getAllBots } from "../db/Read";
@@ -25,10 +28,12 @@ const updateBotUIFlow = async (
   logger: ILogger
 ): Promise<void> => {
   const triggerId = context.getInteractionData().triggerId;
+
   const data = context.getInteractionData();
+
   const { actionId } = data;
 
-  const persistenceData: Array<Bot> = await getAllBots(appId, read);
+  const persistenceData: Array<Bot> = await getAllBots(appId, read, logger);
 
   const botpressId = actionId.split("#")?.[1];
 
@@ -48,7 +53,8 @@ const updateBotUIFlow = async (
     persistence,
     modify,
     appId,
-    existingbOT
+    existingbOT,
+    logger
   );
 
   await modify
@@ -67,9 +73,13 @@ const updateBotDBFlow = async (
   modify: IModify,
   logger: ILogger
 ) => {
-  const updateBotData: Partial<Bot> = extractDataFromViewModal(context);
+  const updateBotData: Partial<Bot> = extractDataFromViewModal(context, logger);
+  const { view } = context.getInteractionData();
 
-  await updateBotInsideDB(persistence, modify, read, logger, updateBotData);
+  await updateBotInsideDB(persistence, modify, read, logger, {
+    ...updateBotData,
+    coreDdId: view.id.split(SEPARATOR)[1],
+  } as Bot);
 };
 
 export { updateBotDBFlow, updateBotUIFlow };

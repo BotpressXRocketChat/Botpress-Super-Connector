@@ -10,8 +10,8 @@ import {
   RocketChatAssociationModel,
   RocketChatAssociationRecord,
 } from "@rocket.chat/apps-engine/definition/metadata";
-import { getAllBots } from "./Read";
 import { Bot, CoreDBIdsPersistenceStorage } from "../types/Types";
+import { validateCoreDBIdsStorage } from "../validator/DBResponse";
 
 export const createBotInsideDB = async (
   persistence: IPersistence,
@@ -49,21 +49,16 @@ export const createBotInsideDB = async (
       appID
     );
 
-    let botsCoreDBIdsPersistence = await read
-      .getPersistenceReader()
-      .readByAssociation(botsCoreDBIdsAssociation);
+    let botsCoreDBIdsPersistence: CoreDBIdsPersistenceStorage =
+      validateCoreDBIdsStorage(
+        (await read
+          .getPersistenceReader()
+          .readByAssociation(
+            botsCoreDBIdsAssociation
+          )) as CoreDBIdsPersistenceStorage[]
+      );
 
-    if (!botsCoreDBIdsAssociation) {
-      botsCoreDBIdsPersistence = [
-        {
-          coreDdIds: [coreDdId],
-        },
-      ];
-    } else {
-      (
-        botsCoreDBIdsAssociation[0] as CoreDBIdsPersistenceStorage
-      ).coreDBIDs.push(coreDdId);
-    }
+    botsCoreDBIdsPersistence.coreDBIDs.push(coreDdId);
 
     const updateBotsCoreDBIdsAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
@@ -72,7 +67,7 @@ export const createBotInsideDB = async (
 
     await persistence.updateByAssociation(
       updateBotsCoreDBIdsAssociation,
-      botsCoreDBIdsPersistence[0],
+      botsCoreDBIdsPersistence,
       true
     );
   } catch (error) {

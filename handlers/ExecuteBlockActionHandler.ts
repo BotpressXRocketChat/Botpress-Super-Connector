@@ -39,10 +39,13 @@ export const executeBlockActionHandler = async (
     switch (true) {
       case actionId.startsWith(ActionIdsPrefixes.CREATE_BOT):
         createBotUIFlow(context, read, persistence, modify, appID, logger);
+        break;
       case actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT):
         updateBotUIFlow(context, read, persistence, modify, appID, logger);
+        break;
       case actionId.startsWith(ActionIdsPrefixes.DELETE_BOT):
         deleteBotDBFlow(context, read, persistence, modify, appID, logger);
+        break;
       case actionId.startsWith(ActionIdsPrefixes.BOT_SINGLE_CHOICE):
         const { room, message } = data;
         if (!message?.id || !room) throw new Error("Invalid message or room");
@@ -64,8 +67,10 @@ export const executeBlockActionHandler = async (
           selectedChoice,
           room
         );
+        break;
     }
   } catch (error) {
+    logger.info(error);
     return {
       success: false,
     };

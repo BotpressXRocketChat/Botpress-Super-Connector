@@ -16,6 +16,7 @@ import {
 import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
 import { createBotDBFlow } from "../flows/CreateBot";
 import { getAllBots } from "../db/Read";
+import { updateBotDBFlow } from "../flows/UpdateBot";
 
 export const executeViewSubmitHandler = async (
   context: UIKitViewSubmitInteractionContext,
@@ -28,8 +29,8 @@ export const executeViewSubmitHandler = async (
   const { view } = context.getInteractionData();
 
   try {
-    switch (view.id) {
-      case CREATE_UPDATE_BOT_MODAL_CONFIG.CREATE_VIEW_ID:
+    switch (true) {
+      case view.id.startsWith(CREATE_UPDATE_BOT_MODAL_CONFIG.CREATE_VIEW_ID):
         await createBotDBFlow(
           context,
           read,
@@ -39,11 +40,15 @@ export const executeViewSubmitHandler = async (
           appID
         );
         context.getInteractionResponder().successResponse();
-      case CREATE_UPDATE_BOT_MODAL_CONFIG.UPDATE_VIEW_ID:
+        break;
+      case view.id.startsWith(CREATE_UPDATE_BOT_MODAL_CONFIG.UPDATE_VIEW_ID):
+        logger.info(view.id);
+        await updateBotDBFlow(context, read, persistence, modify, logger);
         break;
       default:
         break;
     }
+    logger.info("finished flow");
   } catch (error) {
     context.getInteractionResponder().viewErrorResponse({
       viewId: view.id,

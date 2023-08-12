@@ -1,6 +1,7 @@
 import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
-import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
+import { ACTION } from "../config/BlocksConfig";
 import { Bot, ConverseResponse, ResponseType } from "../types/Types";
+import { ILogger } from "@rocket.chat/apps-engine/definition/accessors";
 
 export const getConverseAPIRequestContent = (text: string) => {
   return {
@@ -27,18 +28,24 @@ export const generateServiceUnavailableMessage = (
 };
 
 export const extractDataFromViewModal = (
-  context: UIKitViewSubmitInteractionContext
+  context: UIKitViewSubmitInteractionContext,
+  logger?: ILogger
 ): Partial<Bot> => {
   const { view } = context.getInteractionData();
-  const botData: object = {};
+  if (!view.state) return {};
 
-  CREATE_UPDATE_BOT_MODAL_CONFIG.FIELDS.map(({ BLOCK_ID, ACTION_ID }) => {
-    const key = ACTION_ID.split("#")[1];
-
-    const value = view.state ? view.state[BLOCK_ID][ACTION_ID] : "";
-
-    botData[key] = value;
-  });
-
-  return botData as Bot;
+  return Object.values(view.state)
+    .map((innerObject) =>
+      Object.entries(innerObject)
+        .filter(([key]) => key.startsWith(`${ACTION}#`))
+        .reduce((result, [actionId, value]) => {
+          const cleanActionId = actionId.replace(`${ACTION}#`, "");
+          result[cleanActionId] = value;
+          return result;
+        }, {})
+    )
+    .reduce(
+      (result, actionObject) => Object.assign(result, actionObject),
+      {}
+    ) as Bot;
 };

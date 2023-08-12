@@ -21,8 +21,11 @@ export const deleteBotInsideDB = async (
   deleteBotData: Partial<IBotUser>,
   appID: string
 ) => {
+  logger.info("inside delete");
   try {
     const coreDdId = (deleteBotData as Bot).coreDdId;
+
+    modify.getDeleter().deleteUsers()
 
     await persistence.remove(coreDdId);
 

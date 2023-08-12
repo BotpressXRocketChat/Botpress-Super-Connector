@@ -5,7 +5,6 @@ import {
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 
-import { IBotUser } from "@rocket.chat/apps-engine/definition/users/IBotUser";
 import { IUser, UserType } from "@rocket.chat/apps-engine/definition/users";
 import {
   RocketChatAssociationModel,
@@ -18,24 +17,29 @@ export const updateBotInsideDB = async (
   modify: IModify,
   read: IRead,
   logger: ILogger,
-  updatebotData: Partial<IBotUser>
+  updatebotData: Bot
 ) => {
   try {
+    console.log(updatebotData, "updatebotdata");
     const botUserCoreDB: IUser = await read
       .getUserReader()
       .getById((updatebotData as Bot).coreDdId);
 
-    await modify
+    const x = await modify
       .getUpdater()
       .getUserUpdater()
       .updateCustomFields(botUserCoreDB, {
         username: (updatebotData as Bot).username,
       });
 
+    logger.info(x, "modified");
+
     const updateBotAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
       (updatebotData as Bot).coreDdId
     );
+
+    logger.info(updateBotAssociation);
 
     await persistence.updateByAssociation(
       updateBotAssociation,

@@ -1,11 +1,11 @@
 import { PRIMARY, DANGER, ActionIdsPrefixes } from "../types/Types";
 
-export const BLOCK = "block",
-  ACTION = "ACTION";
+export const BLOCK = Object.freeze("block"),
+  ACTION = Object.freeze("ACTION");
 
-export const SEPARATOR = "»";
+export const SEPARATOR = Object.freeze("»");
 
-export const LIST_BOT_CONFIG = {
+export const LIST_BOT_CONFIG = Object.freeze({
   PRIMARY_TEXT: {
     TEXT: "Choose a bot from below to edit",
     BLOCK_ID: "list-bot-base-command-text",
@@ -20,9 +20,9 @@ export const LIST_BOT_CONFIG = {
   BOT_BUTTON: {
     STYLE: PRIMARY,
   },
-};
+});
 
-export const DELETE_BOT_CONFIG = {
+export const DELETE_BOT_CONFIG = Object.freeze({
   PRIMARY_TEXT: {
     TEXT: "Are you sure you want to delete the bot",
     BLOCK_ID: "delete-bot-base-command-text",
@@ -41,9 +41,9 @@ export const DELETE_BOT_CONFIG = {
     BLOCK_ID: `${BLOCK}#no-delete-bot`,
     ACTION_ID: `${ActionIdsPrefixes.CREATE_BOT}#no-${ACTION}`,
   },
-};
+});
 
-export const CREATE_UPDATE_BOT_MODAL_CONFIG = {
+export const CREATE_UPDATE_BOT_MODAL_CONFIG = Object.freeze({
   CREATE_VIEW_ID: "create-bot-modal-view",
   UPDATE_VIEW_ID: "update-bot-modal-view",
   LABEL: "Bot Settings",
@@ -91,4 +91,4 @@ export const CREATE_UPDATE_BOT_MODAL_CONFIG = {
     BLOCK_ID: "create-update-bot-save-state",
     ACTION_ID: `${ActionIdsPrefixes.UPDATE_BOT}#update_bot-${ACTION}`,
   },
-};
+});
