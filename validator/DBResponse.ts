@@ -30,7 +30,6 @@ export const validateCoreDBIdsStorage = (
   logger?: ILogger
 ): CoreDBIdsPersistenceStorage => {
   try {
-    logger?.info(coreDBIdsStorage);
     if (
       !coreDBIdsStorage.length ||
       !coreDBIdsStorage[0]?.coreDBIDs ||

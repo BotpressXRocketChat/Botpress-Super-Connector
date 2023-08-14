@@ -1,8 +1,4 @@
-import {
-  ILogger,
-  IPersistence,
-  IRead,
-} from "@rocket.chat/apps-engine/definition/accessors";
+import { ILogger, IRead } from "@rocket.chat/apps-engine/definition/accessors";
 import {
   RocketChatAssociationModel,
   RocketChatAssociationRecord,

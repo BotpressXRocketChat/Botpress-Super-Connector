@@ -19,7 +19,7 @@ export const createBotInsideDB = async (
   read: IRead,
   logger: ILogger,
   newBotData: Partial<Bot>,
-  appID: string
+  appId: string
 ) => {
   try {
     const newBot: Partial<IBotUser> = {
@@ -46,7 +46,7 @@ export const createBotInsideDB = async (
 
     const botsCoreDBIdsAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
-      appID
+      appId
     );
 
     let botsCoreDBIdsPersistence: CoreDBIdsPersistenceStorage =
@@ -62,7 +62,7 @@ export const createBotInsideDB = async (
 
     const updateBotsCoreDBIdsAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
-      appID
+      appId
     );
 
     await persistence.updateByAssociation(

@@ -1,21 +1,13 @@
 import {
-  IAppAccessors,
-  IConfigurationExtend,
-  IHttp,
   ILogger,
   IModify,
   IPersistence,
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 
-import {
-  IUIKitResponse,
-  UIKitBlockInteractionContext,
-  UIKitViewSubmitInteractionContext,
-} from "@rocket.chat/apps-engine/definition/uikit";
+import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
 import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
 import { createBotDBFlow } from "../flows/CreateBot";
-import { getAllBots } from "../db/Read";
 import { updateBotDBFlow } from "../flows/UpdateBot";
 
 export const executeViewSubmitHandler = async (
@@ -23,7 +15,7 @@ export const executeViewSubmitHandler = async (
   read: IRead,
   persistence: IPersistence,
   modify: IModify,
-  appID: string,
+  appId: string,
   logger: ILogger
 ): Promise<void> => {
   const { view } = context.getInteractionData();
@@ -37,7 +29,7 @@ export const executeViewSubmitHandler = async (
           persistence,
           modify,
           logger,
-          appID
+          appId
         );
         context.getInteractionResponder().successResponse();
         break;

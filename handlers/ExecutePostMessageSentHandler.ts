@@ -14,7 +14,7 @@ export const executePostMessageSentHandler = async (
   http: IHttp,
   persistence: IPersistence,
   modify: IModify,
-  appID: string,
+  appId: string,
   logger: ILogger
 ): Promise<void> => {
   const { text, room, id, threadId } = message;
@@ -39,7 +39,7 @@ export const executePostMessageSentHandler = async (
     read,
     http,
     modify,
-    appID,
+    appId,
     logger,
     botUsername,
     requiredThreadID,

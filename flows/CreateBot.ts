@@ -10,7 +10,6 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { createUpdateBotModal } from "../ui_elements/modals/CreateUpdateBot";
-import { CREATE_UPDATE_BOT_MODAL_CONFIG } from "../config/BlocksConfig";
 import { createBotInsideDB } from "../db/Create";
 import { extractDataFromViewModal } from "../helpers/Botpress";
 import { Bot } from "../types/Types";
@@ -47,11 +46,11 @@ const createBotDBFlow = async (
   persistence: IPersistence,
   modify: IModify,
   logger: ILogger,
-  appID: string
+  appId: string
 ) => {
   const newBotData: Partial<Bot> = extractDataFromViewModal(context);
 
-  await createBotInsideDB(persistence, modify, read, logger, newBotData, appID);
+  await createBotInsideDB(persistence, modify, read, logger, newBotData, appId);
 };
 
 export { createBotUIFlow, createBotDBFlow };

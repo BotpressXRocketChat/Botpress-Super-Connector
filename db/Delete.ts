@@ -5,8 +5,6 @@ import {
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 
-import { IBotUser } from "@rocket.chat/apps-engine/definition/users/IBotUser";
-import { IUser, UserType } from "@rocket.chat/apps-engine/definition/users";
 import {
   RocketChatAssociationModel,
   RocketChatAssociationRecord,
@@ -18,20 +16,26 @@ export const deleteBotInsideDB = async (
   modify: IModify,
   read: IRead,
   logger: ILogger,
-  deleteBotData: Partial<IBotUser>,
-  appID: string
+  deleteBotData: Bot,
+  appId: string
 ) => {
   logger.info("inside delete");
   try {
-    const coreDdId = (deleteBotData as Bot).coreDdId;
+    const deleteBotAssociation = new RocketChatAssociationRecord(
+      RocketChatAssociationModel.MISC,
+      deleteBotData.coreDdId
+    );
 
-    modify.getDeleter().deleteUsers()
+    await modify
+      .getUpdater()
+      .getUserUpdater()
+      .deactivate(deleteBotData.coreDdId, true);
 
-    await persistence.remove(coreDdId);
+    await persistence.removeByAssociation(deleteBotAssociation);
 
     const botsCoreDBIdsAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
-      appID
+      appId
     );
 
     let botsCoreDBIdsPersistence = (await read
@@ -41,17 +45,19 @@ export const deleteBotInsideDB = async (
       )) as CoreDBIdsPersistenceStorage[];
 
     let requiredAssociationData = botsCoreDBIdsPersistence[0].coreDBIDs.filter(
-      (id) => !(id == coreDdId)
+      (id) => !(id == deleteBotData.coreDdId)
     );
 
     const updateBotsCoreDBIdsAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
-      appID
+      appId
     );
 
     await persistence.updateByAssociation(
       updateBotsCoreDBIdsAssociation,
-      requiredAssociationData,
+      {
+        coreDBIDs: requiredAssociationData,
+      },
       true
     );
   } catch (error) {

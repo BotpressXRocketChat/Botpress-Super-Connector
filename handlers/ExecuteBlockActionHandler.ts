@@ -1,6 +1,4 @@
 import {
-  IAppAccessors,
-  IConfigurationExtend,
   IHttp,
   ILogger,
   IModify,
@@ -15,7 +13,6 @@ import {
 import { ActionIdsPrefixes } from "../types/Types";
 import { createBotUIFlow } from "../flows/CreateBot";
 import { updateBotUIFlow } from "../flows/UpdateBot";
-import { deleteBotInsideDB } from "../db/Delete";
 import { SEPARATOR } from "../config/BlocksConfig";
 import { intitateConversationHandler } from "../flows/BotConverse";
 import { deleteBotDBFlow } from "../flows/DeleteBot";
@@ -29,7 +26,7 @@ export const executeBlockActionHandler = async (
   http: IHttp,
   persistence: IPersistence,
   modify: IModify,
-  appID: string,
+  appId: string,
   logger: ILogger
 ): Promise<IUIKitResponse> => {
   const data = context.getInteractionData();
@@ -38,13 +35,13 @@ export const executeBlockActionHandler = async (
   try {
     switch (true) {
       case actionId.startsWith(ActionIdsPrefixes.CREATE_BOT):
-        createBotUIFlow(context, read, persistence, modify, appID, logger);
+        createBotUIFlow(context, read, persistence, modify, appId, logger);
         break;
       case actionId.startsWith(ActionIdsPrefixes.UPDATE_BOT):
-        updateBotUIFlow(context, read, persistence, modify, appID, logger);
+        updateBotUIFlow(context, read, persistence, modify, appId, logger);
         break;
       case actionId.startsWith(ActionIdsPrefixes.DELETE_BOT):
-        deleteBotDBFlow(context, read, persistence, modify, appID, logger);
+        deleteBotDBFlow(context, read, persistence, modify, appId, logger);
         break;
       case actionId.startsWith(ActionIdsPrefixes.BOT_SINGLE_CHOICE):
         const { room, message } = data;
@@ -60,7 +57,7 @@ export const executeBlockActionHandler = async (
           read,
           http,
           modify,
-          appID,
+          appId,
           logger,
           botUsername,
           message?.threadId || message.id,

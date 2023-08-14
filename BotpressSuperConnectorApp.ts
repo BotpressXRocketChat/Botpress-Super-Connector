@@ -9,7 +9,7 @@ import {
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { App } from "@rocket.chat/apps-engine/definition/App";
 import { IAppInfo } from "@rocket.chat/apps-engine/definition/metadata";
-import { ListBots } from "./commands/ListBots";
+import { Base } from "./commands/Base";
 import { executeBlockActionHandler } from "./handlers/ExecuteBlockActionHandler";
 import { executeViewSubmitHandler } from "./handlers/ExecuteViewSubmitHandler";
 import {
@@ -31,10 +31,7 @@ export class BotpressSuperConnectorApp extends App implements IPostMessageSent {
   public async extendConfiguration(
     configuration: IConfigurationExtend
   ): Promise<void> {
-    const listBotsCommand: ListBots = new ListBots(
-      this.getLogger(),
-      this.getID()
-    );
+    const listBotsCommand: Base = new Base(this.getLogger(), this.getID());
     await configuration.slashCommands.provideSlashCommand(listBotsCommand);
   }
 

@@ -10,10 +10,7 @@ import {
   UIKitViewSubmitInteractionContext,
 } from "@rocket.chat/apps-engine/definition/uikit";
 import { createUpdateBotModal } from "../ui_elements/modals/CreateUpdateBot";
-import {
-  CREATE_UPDATE_BOT_MODAL_CONFIG,
-  SEPARATOR,
-} from "../config/BlocksConfig";
+import { SEPARATOR } from "../config/BlocksConfig";
 import { updateBotInsideDB } from "../db/Update";
 import { Bot } from "../types/Types";
 import { getAllBots } from "../db/Read";

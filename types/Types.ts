@@ -23,3 +23,9 @@ export {
   Choice,
 } from "./botpress/ConverseResponse";
 export { Bot, CoreDBIdsPersistenceStorage } from "./botpress/Bot";
+
+export enum Subcommands {
+  Help = "help",
+  ListBots = "list-bots",
+  DeleteBot = "delete-bot",
+}

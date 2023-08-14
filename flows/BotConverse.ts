@@ -11,7 +11,7 @@ import {
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { getAllBots } from "../db/Read";
-import { sendMessage } from "../helpers/SendMessage";
+import { conversate } from "../helpers/Utility";
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
 import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
 
@@ -19,14 +19,14 @@ export const intitateConversationHandler = async (
   read: IRead,
   http: IHttp,
   modify: IModify,
-  appID: string,
+  appId: string,
   logger: ILogger,
   botUsername: string,
   threadID: string,
   text: string,
   room: IRoom
 ): Promise<void> => {
-  const persistenceData: Bot[] = await getAllBots(appID, read);
+  const persistenceData: Bot[] = await getAllBots(appId, read);
 
   let requiredBot: Bot | null = null;
 
@@ -50,14 +50,14 @@ export const intitateConversationHandler = async (
     .getById((requiredBot as Bot).coreDdId);
 
   for (let idx = 0; idx < apiResponse.responses.length; idx++) {
-    await sendMessage(
+    await conversate(
       modify,
       apiResponse.responses[idx],
       botUserCoreDB,
       requiredBot,
       room,
       threadID,
-      appID,
+      appId,
       logger
     );
   }

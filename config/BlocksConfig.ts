@@ -1,9 +1,35 @@
-import { PRIMARY, DANGER, ActionIdsPrefixes } from "../types/Types";
+import {
+  PRIMARY,
+  DANGER,
+  ActionIdsPrefixes,
+  Subcommands,
+} from "../types/Types";
 
 export const BLOCK = Object.freeze("block"),
   ACTION = Object.freeze("ACTION");
 
 export const SEPARATOR = Object.freeze("»");
+
+export const HELP_CONFIG = Object.freeze({
+  PRIMARY_TEXT: {
+    TEXT: "Botpress Super Connector",
+    BLOCK_ID: "help-menu",
+  },
+  BODY: [
+    {
+      TEXT: `1: '${Subcommands.Help}' subcommand will show the help menu`,
+      BLOCK_ID: "help-menu-help-subcommand",
+    },
+    {
+      TEXT: `2: '${Subcommands.ListBots}' subcommand will list all your configured bots`,
+      BLOCK_ID: "help-menu-list-bot-subcommand",
+    },
+    {
+      TEXT: `3: '${Subcommands.DeleteBot}' + Bot's user's name subcommand will list all your configured bots, , for eg /botpress delete-bot username`,
+      BLOCK_ID: "help-menu-delete-bot-subcommand",
+    },
+  ],
+});
 
 export const LIST_BOT_CONFIG = Object.freeze({
   PRIMARY_TEXT: {
@@ -27,19 +53,16 @@ export const DELETE_BOT_CONFIG = Object.freeze({
     TEXT: "Are you sure you want to delete the bot",
     BLOCK_ID: "delete-bot-base-command-text",
   },
-  YES_BUTTON: {
-    STYLE: DANGER,
-    LABEL: "YES",
-    TEXT: "YES",
-    BLOCK_ID: `${BLOCK}#delete-bot`,
-    ACTION_ID: `${ActionIdsPrefixes.CREATE_BOT}#delete-${ACTION}`,
+  INVALID_PROMPT: {
+    TEXT: "Provide valid bot username in subcommand or run /botpress help for usage",
+    BLOCK_ID: "delete-bot-invalid-text",
   },
-  NO_BUTTON: {
-    STYLE: PRIMARY,
-    LABEL: "NO",
-    TEXT: "NO",
-    BLOCK_ID: `${BLOCK}#no-delete-bot`,
-    ACTION_ID: `${ActionIdsPrefixes.CREATE_BOT}#no-${ACTION}`,
+  DELETE_BUTTON: {
+    STYLE: DANGER,
+    LABEL: "Delete",
+    TEXT: "Delete",
+    BLOCK_ID: `${BLOCK}#delete-bot`,
+    ACTION_ID: `${ActionIdsPrefixes.DELETE_BOT}#delete-${ACTION}`,
   },
 });
 

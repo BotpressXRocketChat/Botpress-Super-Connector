@@ -9,6 +9,8 @@ import { UIKitBlockInteractionContext } from "@rocket.chat/apps-engine/definitio
 import { Bot } from "../types/Types";
 import { getAllBots } from "../db/Read";
 import { deleteBotInsideDB } from "../db/Delete";
+import { createDirectRoom, sendMessage } from "../helpers/Utility";
+import { SEPARATOR } from "../config/BlocksConfig";
 
 export const deleteBotDBFlow = async (
   context: UIKitBlockInteractionContext,
@@ -21,26 +23,53 @@ export const deleteBotDBFlow = async (
   const data = context.getInteractionData();
   const { actionId } = data;
 
-  const persistenceData: Array<Bot> = await getAllBots(appId, read);
+  const persistenceData: Array<Bot> = await getAllBots(appId, read, logger);
 
-  const botpressId = actionId.split("#")?.[1];
+  const botpressUsername = actionId.split(SEPARATOR)?.[1];
 
-  let existingbOT: Bot | null = null;
+  let existingBot: Bot | null = null;
 
   persistenceData.map((bot) => {
-    if (bot.botpressId == botpressId) {
-      existingbOT = bot;
+    if (bot.username == botpressUsername) {
+      existingBot = bot;
     }
   });
 
-  if (!existingbOT) return;
+  if (!existingBot) return;
 
   await deleteBotInsideDB(
     persistence,
     modify,
     read,
     logger,
-    existingbOT,
+    existingBot,
     appId
+  );
+
+  const initialMessageSender = context.getInteractionData().message?.sender;
+  logger.info(initialMessageSender, "initialMessageSender");
+  if (!initialMessageSender) return;
+
+  const sender = await read.getUserReader().getAppUser();
+  logger.info(sender, "sender");
+
+  if (!sender) return;
+
+  const directChatRoom = await createDirectRoom(
+    read,
+    modify,
+    sender,
+    initialMessageSender
+  );
+
+  logger.info(directChatRoom, "directChatRoom");
+
+  if (!directChatRoom) return;
+
+  await sendMessage(
+    modify,
+    directChatRoom,
+    sender,
+    `Successfully deleted bot with username ${botpressUsername} from App's storage and deactivated the user`
   );
 };
