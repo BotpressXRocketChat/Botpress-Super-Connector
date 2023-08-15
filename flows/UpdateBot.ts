@@ -105,7 +105,7 @@ const updateBotDBFlow = async (
     modify,
     directChatRoom,
     sender,
-    `Successfully created bot with username ${updatedBotData.username}`
+    `Successfully updated bot with username ${updatedBotData.username}`
   );
 };
 

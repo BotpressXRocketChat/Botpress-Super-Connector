@@ -11,7 +11,7 @@ import {
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { getAllBots } from "../db/Read";
-import { conversate } from "../helpers/Utility";
+import { conversate, getChatSession } from "../helpers/Utility";
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
 import { IRoom } from "@rocket.chat/apps-engine/definition/rooms";
 
@@ -22,9 +22,9 @@ export const intitateConversationHandler = async (
   appId: string,
   logger: ILogger,
   botUsername: string,
-  threadID: string,
   text: string,
-  room: IRoom
+  room: IRoom,
+  threadId?: string
 ): Promise<void> => {
   const persistenceData: Bot[] = await getAllBots(appId, read);
 
@@ -38,11 +38,13 @@ export const intitateConversationHandler = async (
 
   if (!requiredBot) return;
 
+  const sessionId = getChatSession(room, threadId || "");
+
   const apiResponse: ConverseResponse = await initiateConversationWithBot(
     http,
     requiredBot,
-    threadID,
-    text
+    text,
+    sessionId
   );
 
   const botUserCoreDB: IUser = await read
@@ -56,9 +58,9 @@ export const intitateConversationHandler = async (
       botUserCoreDB,
       requiredBot,
       room,
-      threadID,
       appId,
-      logger
+      logger,
+      threadId
     );
   }
 };
@@ -66,12 +68,12 @@ export const intitateConversationHandler = async (
 export const initiateConversationWithBot = async (
   http: IHttp,
   botData: Bot,
-  session: string,
-  text: string
+  text: string,
+  sessionId?: string
 ): Promise<ConverseResponse> => {
   const requestContent = getConverseAPIRequestContent(text);
 
-  const botpressWebhookUrl = `${botData.botpressServerUrl}/api/v1/bots/${botData.botpressId}/converse/${session}`;
+  const botpressWebhookUrl = `${botData.botpressServerUrl}/api/v1/bots/${botData.botpressId}/converse/${sessionId}`;
 
   try {
     const { data } = await http.post(botpressWebhookUrl, requestContent);

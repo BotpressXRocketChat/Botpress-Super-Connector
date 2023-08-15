@@ -7,6 +7,7 @@ import {
 } from "@rocket.chat/apps-engine/definition/accessors";
 import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 import { intitateConversationHandler } from "../flows/BotConverse";
+import { getChatThreadId } from "../helpers/Utility";
 
 export const executePostMessageSentHandler = async (
   message: IMessage,
@@ -17,11 +18,11 @@ export const executePostMessageSentHandler = async (
   appId: string,
   logger: ILogger
 ): Promise<void> => {
-  const { text, room, id, threadId } = message;
+  const { text, room } = message;
 
-  const requiredThreadID = threadId || id;
+  if (!text) return;
 
-  if (!text || !requiredThreadID) return;
+  const reqThreadId = getChatThreadId(message);
 
   const botUsername = text
     ?.split(" ")
@@ -35,6 +36,7 @@ export const executePostMessageSentHandler = async (
     .filter((word) => !word.startsWith("@"))
     .join(" ");
 
+  logger.info(filteredText);
   await intitateConversationHandler(
     read,
     http,
@@ -42,9 +44,9 @@ export const executePostMessageSentHandler = async (
     appId,
     logger,
     botUsername,
-    requiredThreadID,
     filteredText,
-    room
+    room,
+    reqThreadId
   );
 
   return;

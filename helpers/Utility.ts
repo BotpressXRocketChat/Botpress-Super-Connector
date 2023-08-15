@@ -1,6 +1,5 @@
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
 import { Bot, Response, ResponseType } from "../types/Types";
-// import {} from
 import {
   ILogger,
   IMessageBuilder,
@@ -17,7 +16,7 @@ import { BLOCK, SEPARATOR } from "../config/BlocksConfig";
 import { ActionIdsPrefixes, PLAIN_TEXT, PRIMARY, Choice } from "../types/Types";
 import { PlainText, ButtonElement, Block } from "@rocket.chat/ui-kit";
 import { SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
-import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
+import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
 
 export const createDirectRoom = async (
   read: IRead,
@@ -56,7 +55,8 @@ export const sendMessage = async (
   sender: IUser,
   text: string,
   messageBlocks?: Array<Block>,
-  threadId?: string
+  threadId?: string,
+  logger?: ILogger
 ) => {
   let msg: IMessageBuilder = modify.getCreator().startMessage();
 
@@ -99,9 +99,9 @@ export const conversate = async (
   botUserCoreDB: IUser,
   botUserPersistence: Bot,
   room: IRoom,
-  threadId: string,
   appId: string,
-  logger: ILogger
+  logger: ILogger,
+  threadId?: string
 ): Promise<void> => {
   const messageBlocks: Array<Block> = [];
   switch (responseData.type) {
@@ -136,6 +136,32 @@ export const conversate = async (
     botUserCoreDB,
     responseData.text,
     messageBlocks,
-    threadId
+    threadId,
+    logger
   );
+};
+
+export const getChatSession = (room: IRoom, threadId: string): string => {
+  switch (room.type) {
+    case RoomType.CHANNEL:
+      return threadId;
+
+    default:
+      return room.id;
+  }
+};
+
+export const getChatThreadId = (message: IMessage): string | undefined => {
+  const { room, id, threadId } = message;
+  let requiredThreadId: string | undefined = "";
+
+  switch (room.type) {
+    case RoomType.CHANNEL:
+      requiredThreadId = threadId || id;
+
+    default:
+      break;
+  }
+
+  return requiredThreadId;
 };

@@ -16,9 +16,7 @@ import { updateBotUIFlow } from "../flows/UpdateBot";
 import { SEPARATOR } from "../config/BlocksConfig";
 import { intitateConversationHandler } from "../flows/BotConverse";
 import { deleteBotDBFlow } from "../flows/DeleteBot";
-
-// import { updateBotFlow } from "../flows/UpdateBot";
-// import { getAllBots } from "../db/ReadBot";
+import { getChatThreadId } from "../helpers/Utility";
 
 export const executeBlockActionHandler = async (
   context: UIKitBlockInteractionContext,
@@ -60,9 +58,9 @@ export const executeBlockActionHandler = async (
           appId,
           logger,
           botUsername,
-          message?.threadId || message.id,
           selectedChoice,
-          room
+          room,
+          getChatThreadId(message)
         );
         break;
     }
