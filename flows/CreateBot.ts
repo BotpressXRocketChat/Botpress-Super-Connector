@@ -13,6 +13,7 @@ import { createUpdateBotModal } from "../ui_elements/modals/CreateUpdateBot";
 import { createBotInsideDB } from "../db/Create";
 import { extractDataFromViewModal } from "../helpers/Botpress";
 import { Bot } from "../types/Types";
+import { createDirectRoom, sendMessage } from "../helpers/Utility";
 
 const createBotUIFlow = async (
   context: UIKitBlockInteractionContext,
@@ -51,6 +52,29 @@ const createBotDBFlow = async (
   const newBotData: Partial<Bot> = extractDataFromViewModal(context);
 
   await createBotInsideDB(persistence, modify, read, logger, newBotData, appId);
+
+  const initialMessageSender = context.getInteractionData().user;
+  if (!initialMessageSender) return;
+
+  const sender = await read.getUserReader().getAppUser();
+
+  if (!sender) return;
+
+  const directChatRoom = await createDirectRoom(
+    read,
+    modify,
+    sender,
+    initialMessageSender
+  );
+
+  if (!directChatRoom) return;
+
+  await sendMessage(
+    modify,
+    directChatRoom,
+    sender,
+    `Successfully created bot with username ${newBotData.username}`
+  );
 };
 
 export { createBotUIFlow, createBotDBFlow };

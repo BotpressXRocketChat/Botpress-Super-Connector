@@ -34,13 +34,11 @@ export const executeViewSubmitHandler = async (
         context.getInteractionResponder().successResponse();
         break;
       case view.id.startsWith(CREATE_UPDATE_BOT_MODAL_CONFIG.UPDATE_VIEW_ID):
-        logger.info(view.id);
         await updateBotDBFlow(context, read, persistence, modify, logger);
         break;
       default:
         break;
     }
-    logger.info("finished flow");
   } catch (error) {
     context.getInteractionResponder().viewErrorResponse({
       viewId: view.id,

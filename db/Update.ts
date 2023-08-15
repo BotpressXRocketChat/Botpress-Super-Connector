@@ -5,7 +5,6 @@ import {
   IRead,
 } from "@rocket.chat/apps-engine/definition/accessors";
 
-import { IUser, UserType } from "@rocket.chat/apps-engine/definition/users";
 import {
   RocketChatAssociationModel,
   RocketChatAssociationRecord,
@@ -17,35 +16,34 @@ export const updateBotInsideDB = async (
   modify: IModify,
   read: IRead,
   logger: ILogger,
-  updatebotData: Bot
-) => {
+  updatebotData: Partial<Bot>
+): Promise<Bot> => {
   try {
-    console.log(updatebotData, "updatebotdata");
-    const botUserCoreDB: IUser = await read
-      .getUserReader()
-      .getById((updatebotData as Bot).coreDdId);
-
-    const x = await modify
-      .getUpdater()
-      .getUserUpdater()
-      .updateCustomFields(botUserCoreDB, {
-        username: (updatebotData as Bot).username,
-      });
-
-    logger.info(x, "modified");
-
-    const updateBotAssociation = new RocketChatAssociationRecord(
+    const reqBotAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,
       (updatebotData as Bot).coreDdId
     );
 
-    logger.info(updateBotAssociation);
+    let [persistenceData] = await persistence.removeByAssociation(
+      reqBotAssociation
+    );
+
+    if (!persistenceData) {
+      throw new Error("User not found");
+    }
+
+    persistenceData = {
+      ...persistenceData,
+      ...updatebotData,
+    };
 
     await persistence.updateByAssociation(
-      updateBotAssociation,
-      updatebotData,
+      reqBotAssociation,
+      persistenceData,
       true
     );
+
+    return persistenceData as Bot;
   } catch (error) {
     logger.error(error);
     throw new Error(error);

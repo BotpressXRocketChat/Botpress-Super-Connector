@@ -19,7 +19,6 @@ export const deleteBotInsideDB = async (
   deleteBotData: Bot,
   appId: string
 ) => {
-  logger.info("inside delete");
   try {
     const deleteBotAssociation = new RocketChatAssociationRecord(
       RocketChatAssociationModel.MISC,

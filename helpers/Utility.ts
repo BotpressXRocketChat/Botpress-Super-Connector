@@ -17,6 +17,7 @@ import { BLOCK, SEPARATOR } from "../config/BlocksConfig";
 import { ActionIdsPrefixes, PLAIN_TEXT, PRIMARY, Choice } from "../types/Types";
 import { PlainText, ButtonElement, Block } from "@rocket.chat/ui-kit";
 import { SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
+import { UIKitViewSubmitInteractionContext } from "@rocket.chat/apps-engine/definition/uikit";
 
 export const createDirectRoom = async (
   read: IRead,

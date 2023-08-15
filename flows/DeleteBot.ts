@@ -28,8 +28,7 @@ export const deleteBotDBFlow = async (
   const botpressUsername = actionId.split(SEPARATOR)?.[1];
 
   let existingBot: Bot | null = null;
-
-  persistenceData.map((bot) => {
+  persistenceData?.map((bot) => {
     if (bot.username == botpressUsername) {
       existingBot = bot;
     }
@@ -46,12 +45,10 @@ export const deleteBotDBFlow = async (
     appId
   );
 
-  const initialMessageSender = context.getInteractionData().message?.sender;
-  logger.info(initialMessageSender, "initialMessageSender");
+  const initialMessageSender = context.getInteractionData().user;
   if (!initialMessageSender) return;
 
   const sender = await read.getUserReader().getAppUser();
-  logger.info(sender, "sender");
 
   if (!sender) return;
 
@@ -61,8 +58,6 @@ export const deleteBotDBFlow = async (
     sender,
     initialMessageSender
   );
-
-  logger.info(directChatRoom, "directChatRoom");
 
   if (!directChatRoom) return;
 

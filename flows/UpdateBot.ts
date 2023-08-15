@@ -15,6 +15,7 @@ import { updateBotInsideDB } from "../db/Update";
 import { Bot } from "../types/Types";
 import { getAllBots } from "../db/Read";
 import { extractDataFromViewModal } from "../helpers/Botpress";
+import { createDirectRoom, sendMessage } from "../helpers/Utility";
 
 const updateBotUIFlow = async (
   context: UIKitBlockInteractionContext,
@@ -70,13 +71,42 @@ const updateBotDBFlow = async (
   modify: IModify,
   logger: ILogger
 ) => {
-  const updateBotData: Partial<Bot> = extractDataFromViewModal(context, logger);
+  let updateBotData: Partial<Bot> = extractDataFromViewModal(context, logger);
   const { view } = context.getInteractionData();
 
-  await updateBotInsideDB(persistence, modify, read, logger, {
-    ...updateBotData,
-    coreDdId: view.id.split(SEPARATOR)[1],
-  } as Bot);
+  const updatedBotData = await updateBotInsideDB(
+    persistence,
+    modify,
+    read,
+    logger,
+    {
+      ...updateBotData,
+      coreDdId: view.id.split(SEPARATOR)[1],
+    } as Bot
+  );
+
+  const initialMessageSender = context.getInteractionData().user;
+  if (!initialMessageSender) return;
+
+  const sender = await read.getUserReader().getAppUser();
+
+  if (!sender) return;
+
+  const directChatRoom = await createDirectRoom(
+    read,
+    modify,
+    sender,
+    initialMessageSender
+  );
+
+  if (!directChatRoom) return;
+
+  await sendMessage(
+    modify,
+    directChatRoom,
+    sender,
+    `Successfully created bot with username ${updatedBotData.username}`
+  );
 };
 
 export { updateBotDBFlow, updateBotUIFlow };

@@ -32,14 +32,14 @@ export function createUpdateBotModal(
   logger?: ILogger
 ): IUIKitSurfaceViewParam {
   logger?.info(existingBot);
-  const inputBlocks: Block[] = CREATE_UPDATE_BOT_MODAL_CONFIG["FIELDS"].map(
-    (field) => {
-      const botProperty = field.ACTION_ID.split("#")?.[1];
-      if (!botProperty) throw new Error("Invalid Config");
+  const inputBlocks: Block[] = [];
+  CREATE_UPDATE_BOT_MODAL_CONFIG["FIELDS"].map((field) => {
+    const botProperty = field.ACTION_ID.split("#")?.[1];
+    if (!botProperty) throw new Error("Invalid Config");
+    if (existingBot && field["ACTION_ID"].includes("username")) return;
 
-      logger?.info(field.BLOCK_ID);
-
-      return getInputBlock({
+    inputBlocks.push(
+      getInputBlock({
         label: getTextObject({
           type: PLAIN_TEXT,
           text: field.TEXT_LABEL,
@@ -54,9 +54,9 @@ export function createUpdateBotModal(
           }) as PlainText,
           initialValue: existingBot ? existingBot[botProperty] : "",
         }),
-      });
-    }
-  );
+      })
+    );
+  });
 
   const closeButton = getButtonBlock({
     appId,
