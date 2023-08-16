@@ -51,8 +51,8 @@ const updateBotUIFlow = async (
     persistence,
     modify,
     appId,
+    logger,
     existingbOT,
-    logger
   );
 
   await modify

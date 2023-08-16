@@ -38,6 +38,9 @@ export const intitateConversationHandler = async (
 
   if (!requiredBot) return;
 
+  if (!(requiredBot as Bot)?.scope.includes(room.type))
+    throw new Error("Scope issue");
+
   const sessionId = getChatSession(room, threadId || "");
 
   const apiResponse: ConverseResponse = await initiateConversationWithBot(

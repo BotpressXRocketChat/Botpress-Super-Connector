@@ -7,6 +7,8 @@ import {
   ActionsBlock,
   PlainTextInputElement,
   InputBlock,
+  MultiStaticSelectElement,
+  Option,
 } from "@rocket.chat/ui-kit";
 
 import {
@@ -16,7 +18,9 @@ import {
   ActionItemInput,
   PlainTextInput,
   InputBlockInput,
+  PLAIN_TEXT,
 } from "../types/Types";
+import { MultiSelectionBlockInput } from "../types/block_inputs/SelectionBlock";
 
 export function getTextObject(input: TextBlockInput): PlainText | Markdown {
   return {
@@ -58,5 +62,15 @@ export function getInputBlock(input: InputBlockInput): InputBlock {
   return {
     ...input,
     type: "input",
+  };
+}
+
+export function getOption(option: { TEXT: string; VALUE: string }): Option {
+  return {
+    text: getTextObject({
+      type: PLAIN_TEXT,
+      text: option["TEXT"],
+    }) as PlainText,
+    value: option["VALUE"],
   };
 }

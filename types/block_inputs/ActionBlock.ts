@@ -1,5 +1,12 @@
-import { ButtonElement } from "@rocket.chat/ui-kit";
+import {
+  ButtonElement,
+  MultiStaticSelectElement,
+  StaticSelectElement,
+} from "@rocket.chat/ui-kit";
 
 export type ActionItemInput = {
-  elements: readonly ButtonElement[];
+  elements:
+    | ButtonElement[]
+    | StaticSelectElement[]
+    | MultiStaticSelectElement[];
 };

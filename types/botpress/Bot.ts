@@ -4,6 +4,7 @@ export type Bot = {
   botpressServerUrl: string;
   unavailableMessage: string;
   coreDdId: string;
+  scope: string[];
 };
 
 export type CoreDBIdsPersistenceStorage = {

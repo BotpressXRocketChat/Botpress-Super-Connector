@@ -29,3 +29,9 @@ export enum Subcommands {
   ListBots = "list-bots",
   DeleteBot = "delete-bot",
 }
+
+export enum AppRoomType {
+  CHANNEL = "Channel",
+  DIRECT_CHAT = "Direct",
+  LIVE_CHAT = "Live Chat",
+}

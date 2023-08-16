@@ -29,7 +29,8 @@ const createBotUIFlow = async (
     read,
     persistence,
     modify,
-    appId
+    appId,
+    logger
   );
 
   await modify

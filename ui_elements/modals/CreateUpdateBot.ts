@@ -13,14 +13,28 @@ import {
   SEPARATOR,
 } from "../../config/BlocksConfig";
 import {
+  getActionBlock,
   getButtonBlock,
   getInputBlock,
+  getOption,
   getPlainTextInputBlock,
   getTextObject,
 } from "../Block";
 
-import { Block, PlainText } from "@rocket.chat/ui-kit";
-import { Bot, DANGER, PLAIN_TEXT, PRIMARY } from "../../types/Types";
+import {
+  Block,
+  MultiStaticSelectElement,
+  Option,
+  PlainText,
+} from "@rocket.chat/ui-kit";
+import {
+  ActionItemInput,
+  Bot,
+  DANGER,
+  PLAIN_TEXT,
+  PRIMARY,
+} from "../../types/Types";
+import { reverseRoomTypeMapper } from "../../helpers/Utility";
 
 export function createUpdateBotModal(
   context: UIKitBlockInteractionContext,
@@ -28,8 +42,8 @@ export function createUpdateBotModal(
   persistence: IPersistence,
   modify: IModify,
   appId: string,
-  existingBot?: Bot,
-  logger?: ILogger
+  logger?: ILogger,
+  existingBot?: Bot
 ): IUIKitSurfaceViewParam {
   logger?.info(existingBot);
   const inputBlocks: Block[] = [];
@@ -38,24 +52,54 @@ export function createUpdateBotModal(
     if (!botProperty) throw new Error("Invalid Config");
     if (existingBot && field["ACTION_ID"].includes("username")) return;
 
-    inputBlocks.push(
-      getInputBlock({
-        label: getTextObject({
-          type: PLAIN_TEXT,
-          text: field.TEXT_LABEL,
-        }) as PlainText,
-        element: getPlainTextInputBlock({
+    switch (field["TYPE"]) {
+      case "static_select":
+        const multiStaticElement: MultiStaticSelectElement = {
+          type: "multi_static_select",
           appId,
-          blockId: field.BLOCK_ID,
-          actionId: field.ACTION_ID,
+          blockId: field["BLOCK_ID"],
+          actionId: field["ACTION_ID"],
+          options: field["OPTIONS"].map((option) => getOption(option)),
           placeholder: getTextObject({
             type: PLAIN_TEXT,
-            text: field.PLACE_HOLDER,
+            text: field["PLACE_HOLDER"],
           }) as PlainText,
-          initialValue: existingBot ? existingBot[botProperty] : "",
-        }),
-      })
-    );
+          initialOption: existingBot?.scope.map((roomType) =>
+            getOption({
+              TEXT: reverseRoomTypeMapper(roomType),
+              VALUE: roomType,
+            })
+          ),
+          initialValue: existingBot?.scope,
+        };
+
+        inputBlocks.push(
+          getActionBlock({
+            elements: [multiStaticElement],
+          })
+        );
+        break;
+
+      default:
+        inputBlocks.push(
+          getInputBlock({
+            label: getTextObject({
+              type: PLAIN_TEXT,
+              text: field["TEXT_LABEL"],
+            }) as PlainText,
+            element: getPlainTextInputBlock({
+              appId,
+              blockId: field["BLOCK_ID"],
+              actionId: field["ACTION_ID"],
+              placeholder: getTextObject({
+                type: PLAIN_TEXT,
+                text: field["PLACE_HOLDER"],
+              }) as PlainText,
+              initialValue: existingBot ? existingBot[botProperty] : "",
+            }),
+          })
+        );
+    }
   });
 
   const closeButton = getButtonBlock({

@@ -1,8 +1,10 @@
+import { RoomType } from "@rocket.chat/apps-engine/definition/rooms";
 import {
   PRIMARY,
   DANGER,
   ActionIdsPrefixes,
   Subcommands,
+  AppRoomType,
 } from "../types/Types";
 
 export const BLOCK = Object.freeze("block"),
@@ -94,6 +96,27 @@ export const CREATE_UPDATE_BOT_MODAL_CONFIG = Object.freeze({
       PLACE_HOLDER: "Message",
       BLOCK_ID: `${BLOCK}#unavailableMessage`,
       ACTION_ID: `${ACTION}#unavailableMessage`,
+    },
+    {
+      TEXT_LABEL: "Bot's Scope",
+      PLACE_HOLDER: "Scope the bot to specific chat spaces",
+      OPTIONS: [
+        {
+          TEXT: AppRoomType.CHANNEL,
+          VALUE: RoomType.CHANNEL,
+        },
+        {
+          TEXT: AppRoomType.DIRECT_CHAT,
+          VALUE: RoomType.DIRECT_MESSAGE,
+        },
+        {
+          TEXT: AppRoomType.LIVE_CHAT,
+          VALUE: RoomType.LIVE_CHAT,
+        },
+      ],
+      BLOCK_ID: `${BLOCK}#scope`,
+      ACTION_ID: `${ACTION}#scope`,
+      TYPE: "static_select",
     },
   ],
   CLOSE_BUTTON: {

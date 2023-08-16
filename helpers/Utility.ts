@@ -1,5 +1,5 @@
 import { IUser } from "@rocket.chat/apps-engine/definition/users";
-import { Bot, Response, ResponseType } from "../types/Types";
+import { AppRoomType, Bot, Response, ResponseType } from "../types/Types";
 import {
   ILogger,
   IMessageBuilder,
@@ -78,7 +78,6 @@ export const sendNotification = async (
   messageBlocks: Array<Block>
 ) => {
   const appUser = (await read.getUserReader().getAppUser()) as IUser;
-  let roo;
   const room = context.getRoom();
   const user = context.getSender();
 
@@ -164,4 +163,17 @@ export const getChatThreadId = (message: IMessage): string | undefined => {
   }
 
   return requiredThreadId;
+};
+
+export const reverseRoomTypeMapper = (type: string) => {
+  switch (type) {
+    case RoomType.CHANNEL:
+      return AppRoomType.CHANNEL;
+    case RoomType.DIRECT_MESSAGE:
+      return AppRoomType.DIRECT_CHAT;
+    case RoomType.LIVE_CHAT:
+      return AppRoomType.DIRECT_CHAT;
+    default:
+      throw new Error("Invalid room type");
+  }
 };
