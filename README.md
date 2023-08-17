@@ -1,14 +1,34 @@
 # Botpress-Super-Connector
 Botpress connector for RocketChat
 
+Create for Google Summer of Code 2023
+
 ## Getting Started
-Now that you have generated a blank default Rocket.Chat App, what are you supposed to do next?
-Start developing! Open up your favorite editor, our recommended one is Visual Studio code,
-and start working on your App. Once you have something ready to test, you can either
-package it up and manually deploy it to your test instance or you can use the CLI to do so.
-Here are some commands to get started:
-- `rc-apps package`: this command will generate a packaged app file (zip) which can be installed **if** it compiles with TypeScript
-- `rc-apps deploy`: this will do what `package` does but will then ask you for your server url, username, and password to deploy it for you
+clone this repo and cd into it
+```bash
+git clone https://github.com/BotpressXRocketChat/Botpress-Super-Connector.git
+cd Botpress-Super-Connector
+```
+
+spin up the docker environment:
+```
+docker compose up -d
+```
+configure Rocket.Chat and Botpress:
+* Rocket.chat: http://loclahost:3000
+* Botpress: http://loclahost:3001
+
+install rc-apps
+```
+npm install -g @rocket.chat/apps-cli
+```
+
+build this app
+```
+rc-apps package
+```
+
+You app should be in the dist folder. Now you can install it at Rocket.Chat under private apps.
 
 ## Documentation
 Here are some links to examples and documentation:
