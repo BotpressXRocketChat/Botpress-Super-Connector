@@ -52,7 +52,7 @@ const updateBotUIFlow = async (
     modify,
     appId,
     logger,
-    existingbOT,
+    existingbOT
   );
 
   await modify
@@ -105,7 +105,7 @@ const updateBotDBFlow = async (
     modify,
     directChatRoom,
     sender,
-    `Successfully updated bot with username ${updatedBotData.username}`
+    ` \Hurray\ \n Successfully updated bot with username \ ${updatedBotData.username} \ `
   );
 };
 

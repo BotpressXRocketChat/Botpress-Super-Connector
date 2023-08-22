@@ -22,7 +22,6 @@ import {
   IPostMessageSent,
 } from "@rocket.chat/apps-engine/definition/messages";
 import { executePostMessageSentHandler } from "./handlers/ExecutePostMessageSentHandler";
-import { deleteBotDBFlow } from "./flows/DeleteBot";
 
 export class BotpressSuperConnectorApp extends App implements IPostMessageSent {
   constructor(info: IAppInfo, logger: ILogger, accessors: IAppAccessors) {
@@ -37,6 +36,25 @@ export class BotpressSuperConnectorApp extends App implements IPostMessageSent {
   }
 
   public async executeBlockActionHandler(
+    context: UIKitBlockInteractionContext,
+    read: IRead,
+    http: IHttp,
+    persistence: IPersistence,
+    modify: IModify
+  ): Promise<IUIKitResponse> {
+    // return
+    return await executeBlockActionHandler(
+      context,
+      read,
+      http,
+      persistence,
+      modify,
+      this.getID(),
+      this.getLogger()
+    );
+  }
+
+  public async executeLivechatBlockActionHandler(
     context: UIKitBlockInteractionContext,
     read: IRead,
     http: IHttp,

@@ -14,20 +14,20 @@ export const SEPARATOR = Object.freeze("»");
 
 export const HELP_CONFIG = Object.freeze({
   PRIMARY_TEXT: {
-    TEXT: "Botpress Super Connector",
+    TEXT: ` \ Botpress Super Connector \ `,
     BLOCK_ID: "help-menu",
   },
   BODY: [
     {
-      TEXT: `1: '${Subcommands.Help}' subcommand will show the help menu`,
+      TEXT: `1: \ '${Subcommands.Help}' \ subcommand will show the help menu`,
       BLOCK_ID: "help-menu-help-subcommand",
     },
     {
-      TEXT: `2: '${Subcommands.ListBots}' subcommand will list all your configured bots`,
+      TEXT: `2: \ '${Subcommands.ListBots}' \ subcommand will list all your configured bots`,
       BLOCK_ID: "help-menu-list-bot-subcommand",
     },
     {
-      TEXT: `3: '${Subcommands.DeleteBot}' + Bot's user's name subcommand will list all your configured bots, , for eg /botpress delete-bot username`,
+      TEXT: `3: \ '${Subcommands.DeleteBot}'\ + Bot's user's name subcommand will list all your configured bots, \n for eg /botpress delete-bot username`,
       BLOCK_ID: "help-menu-delete-bot-subcommand",
     },
   ],
@@ -52,11 +52,11 @@ export const LIST_BOT_CONFIG = Object.freeze({
 
 export const DELETE_BOT_CONFIG = Object.freeze({
   PRIMARY_TEXT: {
-    TEXT: "Are you sure you want to delete the bot",
+    TEXT: `Are you sure you want to \ delete \ the bot`,
     BLOCK_ID: "delete-bot-base-command-text",
   },
   INVALID_PROMPT: {
-    TEXT: "Provide valid bot username in subcommand or run /botpress help for usage",
+    TEXT: `Provide valid bot username in subcommand or run \ /botpress \ help for usage`,
     BLOCK_ID: "delete-bot-invalid-text",
   },
   DELETE_BUTTON: {

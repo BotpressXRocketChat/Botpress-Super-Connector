@@ -20,7 +20,6 @@ import {
   InputBlockInput,
   PLAIN_TEXT,
 } from "../types/Types";
-import { MultiSelectionBlockInput } from "../types/block_inputs/SelectionBlock";
 
 export function getTextObject(input: TextBlockInput): PlainText | Markdown {
   return {

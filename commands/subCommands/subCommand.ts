@@ -12,6 +12,8 @@ import { deleteBotCommandExecutor } from "./DeleteBot";
 
 import { Subcommands } from "../../types/Types";
 import { helpCommandExecutor } from "./Help";
+import { Block } from "@rocket.chat/ui-kit";
+import { sendNotification } from "../../helpers/Utility";
 
 export class SubCommand {
   private appId: string;
@@ -31,13 +33,21 @@ export class SubCommand {
   ): Promise<void> {
     const [command] = context.getArguments();
 
+    let messageBlocks: Block[];
+
     switch (command) {
       case Subcommands.ListBots:
-        listBotCommandExecutor(context, read, modify, this.logger, this.appId);
+        messageBlocks = await listBotCommandExecutor(
+          context,
+          read,
+          modify,
+          this.logger,
+          this.appId
+        );
         break;
-
+        ``;
       case Subcommands.DeleteBot:
-        deleteBotCommandExecutor(
+        messageBlocks = deleteBotCommandExecutor(
           context,
           read,
           modify,
@@ -47,8 +57,25 @@ export class SubCommand {
         break;
 
       default:
-        helpCommandExecutor(context, read, modify, this.logger, this.appId);
+        messageBlocks = [
+          ...(await listBotCommandExecutor(
+            context,
+            read,
+            modify,
+            this.logger,
+            this.appId
+          )),
+          ...helpCommandExecutor(
+            context,
+            read,
+            modify,
+            this.logger,
+            this.appId
+          ),
+        ];
     }
+
+    await sendNotification(context, modify, read, messageBlocks);
 
     return;
   }

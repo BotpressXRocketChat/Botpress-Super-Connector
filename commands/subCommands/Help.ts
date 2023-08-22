@@ -9,15 +9,14 @@ import { HELP_CONFIG } from "../../config/BlocksConfig";
 import { getSectionBlock, getTextObject } from "../../ui_elements/Block";
 import { Block, TextObject } from "@rocket.chat/ui-kit";
 import { MARK_DOWN } from "../../types/Types";
-import { sendNotification } from "../../helpers/Utility";
 
-export const helpCommandExecutor = async (
+export const helpCommandExecutor = (
   context: SlashCommandContext,
   read: IRead,
   modify: IModify,
   logger: ILogger,
   appId: string
-): Promise<void> => {
+): Array<Block> => {
   const messageBlocks: Array<Block> = [
     getSectionBlock({
       appId,
@@ -42,5 +41,5 @@ export const helpCommandExecutor = async (
     );
   });
 
-  await sendNotification(context, modify, read, messageBlocks);
+  return messageBlocks;
 };

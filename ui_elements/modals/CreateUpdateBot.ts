@@ -24,16 +24,9 @@ import {
 import {
   Block,
   MultiStaticSelectElement,
-  Option,
   PlainText,
 } from "@rocket.chat/ui-kit";
-import {
-  ActionItemInput,
-  Bot,
-  DANGER,
-  PLAIN_TEXT,
-  PRIMARY,
-} from "../../types/Types";
+import { Bot, DANGER, PLAIN_TEXT, PRIMARY } from "../../types/Types";
 import { reverseRoomTypeMapper } from "../../helpers/Utility";
 
 export function createUpdateBotModal(

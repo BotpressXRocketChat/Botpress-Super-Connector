@@ -36,7 +36,7 @@ export const listBotCommandExecutor = async (
   modify: IModify,
   logger: ILogger,
   appId: string
-): Promise<void> => {
+): Promise<Array<Block>> => {
   const messageBlocks: Array<Block> = [];
 
   const data: Array<Bot> = await getAllBots(appId, read);
@@ -89,5 +89,5 @@ export const listBotCommandExecutor = async (
 
   messageBlocks.push(sectionBlock, botsActionBlock, createButtonSectionElement);
 
-  await sendNotification(context, modify, read, messageBlocks);
+  return messageBlocks;
 };

@@ -20,15 +20,14 @@ import {
   ActionsBlock,
 } from "@rocket.chat/ui-kit";
 import { DANGER, MARK_DOWN, PLAIN_TEXT } from "../../types/Types";
-import { sendNotification } from "../../helpers/Utility";
 
-export const deleteBotCommandExecutor = async (
+export const deleteBotCommandExecutor = (
   context: SlashCommandContext,
   read: IRead,
   modify: IModify,
   logger: ILogger,
   appId: string
-): Promise<void> => {
+): Array<Block> => {
   // const triggerId = context.getTriggerId() as string;
   const [_, botUsername] = context.getArguments();
 
@@ -46,9 +45,7 @@ export const deleteBotCommandExecutor = async (
       })
     );
 
-    await sendNotification(context, modify, read, messageBlocks);
-
-    return;
+    return messageBlocks;
   }
 
   const confirmationMessage = getSectionBlock({
@@ -78,5 +75,5 @@ export const deleteBotCommandExecutor = async (
 
   messageBlocks.push(confirmationMessage, deleteButtonActionBlock);
 
-  await sendNotification(context, modify, read, messageBlocks);
+  return messageBlocks;
 };

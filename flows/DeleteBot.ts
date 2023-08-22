@@ -65,6 +65,6 @@ export const deleteBotDBFlow = async (
     modify,
     directChatRoom,
     sender,
-    `Successfully deleted bot with username ${botpressUsername} from App's storage and deactivated the user`
+    `Successfully deleted bot with username \ ${botpressUsername} \ from App's storage and deactivated the user`
   );
 };

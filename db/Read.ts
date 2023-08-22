@@ -26,6 +26,34 @@ export const getBotByBotpressId = async (
   return data;
 };
 
+export const getBotsByUsername = async (
+  read: IRead,
+  usernames: string[]
+): Promise<Array<Bot>> => {
+  let dbData: Promise<Bot[]>[] | Array<Bot[]> | Bot[] = usernames.map(
+    (participant) => {
+      const associaltion = new RocketChatAssociationRecord(
+        RocketChatAssociationModel.MISC,
+        participant
+      );
+
+      return read
+        .getPersistenceReader()
+        .readByAssociation(associaltion) as Promise<Bot[]>;
+    }
+  );
+
+  dbData = await Promise.all(dbData);
+
+  dbData = dbData.reduce((acc, dbData) => {
+    if (dbData.length) acc.push(dbData[0]);
+
+    return acc;
+  }, []) as Bot[];
+
+  return dbData;
+};
+
 export const getAllBots = async (
   appId: string,
   read: IRead,
