@@ -74,7 +74,7 @@ const createBotDBFlow = async (
     modify,
     directChatRoom,
     sender,
-    `\Hurray\ \n Successfully created bot with username \${newBotData.username}\ `
+    `\ Hurray \ \n Successfully created bot with username \ ${newBotData.username} \ `
   );
 };
 

@@ -16,7 +16,10 @@ import { BLOCK, SEPARATOR } from "../config/BlocksConfig";
 import { ActionIdsPrefixes, PLAIN_TEXT, PRIMARY, Choice } from "../types/Types";
 import { PlainText, ButtonElement, Block } from "@rocket.chat/ui-kit";
 import { SlashCommandContext } from "@rocket.chat/apps-engine/definition/slashcommands";
-import { IMessage } from "@rocket.chat/apps-engine/definition/messages";
+import {
+  IMessage,
+  IMessageAttachment,
+} from "@rocket.chat/apps-engine/definition/messages";
 
 export const createDirectRoom = async (
   read: IRead,
@@ -56,7 +59,8 @@ export const sendMessage = async (
   text: string,
   messageBlocks?: Array<Block>,
   threadId?: string,
-  logger?: ILogger
+  logger?: ILogger,
+  attachmentParams?: IMessageAttachment
 ) => {
   let msg: IMessageBuilder = modify.getCreator().startMessage();
 
@@ -65,6 +69,8 @@ export const sendMessage = async (
   if (messageBlocks) msg.setBlocks(messageBlocks);
 
   msg.setSender(sender).setRoom(room);
+
+  if (attachmentParams) msg.addAttachment(attachmentParams);
 
   if (threadId) msg.setThreadId(threadId);
 
@@ -103,6 +109,9 @@ export const conversate = async (
   threadId?: string
 ): Promise<void> => {
   const messageBlocks: Array<Block> = [];
+  let attachments: IMessageAttachment[] | undefined;
+
+  let text: string = "";
   switch (responseData.type) {
     case ResponseType.SINGLE_CHOICE:
       const optionsBlocks: Array<ButtonElement> = (
@@ -127,17 +136,84 @@ export const conversate = async (
           elements: optionsBlocks,
         })
       );
-  }
 
-  await sendMessage(
-    modify,
-    room,
-    botUserCoreDB,
-    responseData.text,
-    messageBlocks,
-    threadId,
-    logger
-  );
+      text = responseData.text;
+      break;
+
+    case ResponseType.AUDIO:
+      attachments = [
+        {
+          audioUrl: responseData.audio.replace("3000", "4000"),
+          title: {
+            value: responseData.title,
+          },
+        },
+      ];
+      break;
+    case ResponseType.IMAGE:
+      attachments = [
+        {
+          imageUrl: responseData.image.replace("3000", "4000"),
+          title: {
+            value: responseData.title,
+          },
+        },
+      ];
+      break;
+    case ResponseType.VIDEO:
+      attachments = [
+        {
+          videoUrl: responseData.video.replace("3000", "4000"),
+          title: {
+            value: responseData.title,
+          },
+        },
+      ];
+      break;
+
+    case ResponseType.CAROUSEL:
+      attachments = responseData.items.map((item) => {
+        return {
+          imageUrl: item.image.replace("3000", "4000"),
+          title: {
+            value: item.title,
+          },
+        };
+      });
+      break;
+
+    case ResponseType.TEXT:
+      text = responseData.text;
+      break;
+
+    default:
+      break;
+  }
+  if (attachments) {
+    for (let attachment of attachments) {
+      await sendMessage(
+        modify,
+        room,
+        botUserCoreDB,
+        text,
+        messageBlocks,
+        threadId,
+        logger,
+        attachment
+      );
+    }
+  } else {
+    await sendMessage(
+      modify,
+      room,
+      botUserCoreDB,
+      text,
+      messageBlocks,
+      threadId,
+      logger,
+      attachments
+    );
+  }
 };
 
 export const getChatSession = (room: IRoom, threadId: string): string => {

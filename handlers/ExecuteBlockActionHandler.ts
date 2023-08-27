@@ -14,9 +14,9 @@ import { ActionIdsPrefixes } from "../types/Types";
 import { createBotUIFlow } from "../flows/CreateBot";
 import { updateBotUIFlow } from "../flows/UpdateBot";
 import { SEPARATOR } from "../config/BlocksConfig";
-import { intitateConversationHandler } from "../flows/BotConverse";
-import { deleteBotDBFlow } from "../flows/DeleteBot";
-import { getChatThreadId } from "../helpers/Utility";
+ import { deleteBotDBFlow } from "../flows/DeleteBot";
+import { getChatThreadId, sendMessage } from "../helpers/Utility";
+import { RoomType } from "@rocket.chat/apps-engine/definition/rooms";
 
 export const executeBlockActionHandler = async (
   context: UIKitBlockInteractionContext,
@@ -42,24 +42,26 @@ export const executeBlockActionHandler = async (
         deleteBotDBFlow(context, read, persistence, modify, appId, logger);
         break;
       case actionId.startsWith(ActionIdsPrefixes.BOT_SINGLE_CHOICE):
-        const { room, message } = data;
+        const { room, message, user } = data;
         if (!message?.id || !room) throw new Error("Invalid message or room");
         const botUsername = actionId.split("#")[2];
 
-        const selectedChoice = actionId
-          .split("#")[1]
-          .split(SEPARATOR)
-          .join(" ");
+        let selectedChoice = actionId.split("#")[1].split(SEPARATOR).join(" ");
 
-        await intitateConversationHandler(
-          read,
-          http,
+        switch (room.type) {
+          case RoomType.CHANNEL:
+            selectedChoice = `${selectedChoice} @${botUsername}`;
+            break;
+          default:
+            break;
+        }
+
+        await sendMessage(
           modify,
-          appId,
-          logger,
-          botUsername,
-          selectedChoice,
           room,
+          user,
+          selectedChoice,
+          undefined,
           getChatThreadId(message)
         );
         break;

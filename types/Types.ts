@@ -33,5 +33,5 @@ export enum Subcommands {
 export enum AppRoomType {
   CHANNEL = "Channel",
   DIRECT_CHAT = "Direct",
-  LIVE_CHAT = "Live Chat",
+  LIVE_CHAT = "Omnichannel",
 }
